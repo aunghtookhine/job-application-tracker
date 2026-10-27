@@ -21,6 +21,9 @@ public class JobApplication {
     private Long id;
 
     @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
     private String companyName;
 
     @Enumerated(EnumType.STRING)

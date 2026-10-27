@@ -80,6 +80,16 @@ public class GlobalExceptionHandler {
                         Map.of(ex.getParameterName(), ex.getMessage())));
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CommonResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return ResponseEntity
+                .status(ErrorCode.FAIL.getHttpStatus())
+                .body(CommonResponse.error(
+                        ErrorCode.FAIL,
+                        "The required request body payload is missing or malformed.",
+                        null));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse> handleException(Exception ex) {
         log.error("Error: {}", ex.getMessage());

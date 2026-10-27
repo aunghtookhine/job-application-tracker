@@ -1,0 +1,22 @@
+package com.buildmyself.job_application_tracker.config.security;
+
+import com.buildmyself.job_application_tracker.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AppUserDetailsService implements UserDetailsService {
+
+    private final UserRepo userRepo;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepo.findByEmail(email.trim().toLowerCase())
+                .map(AppUserDetails::from)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid email"));
+    }
+}

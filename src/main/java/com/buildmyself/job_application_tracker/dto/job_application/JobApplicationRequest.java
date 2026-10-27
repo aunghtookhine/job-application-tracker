@@ -1,4 +1,4 @@
-package com.buildmyself.job_application_tracker.dto;
+package com.buildmyself.job_application_tracker.dto.job_application;
 
 import com.buildmyself.job_application_tracker.entity.CompanyCountry;
 import com.buildmyself.job_application_tracker.validator.ValueOfEnum;

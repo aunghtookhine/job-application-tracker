@@ -1,7 +1,8 @@
 package com.buildmyself.job_application_tracker.business;
 
-import com.buildmyself.job_application_tracker.dto.JobApplicationRequest;
-import com.buildmyself.job_application_tracker.dto.JobApplicationResponse;
+import com.buildmyself.job_application_tracker.dto.job_application.JobApplicationRequest;
+import com.buildmyself.job_application_tracker.dto.job_application.JobApplicationResponse;
+import com.buildmyself.job_application_tracker.dto.user.AuthUser;
 import com.buildmyself.job_application_tracker.entity.ApplicationStatus;
 import com.buildmyself.job_application_tracker.entity.CompanyCountry;
 import com.buildmyself.job_application_tracker.entity.JobApplication;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -22,20 +24,21 @@ public class JobApplicationService {
         this.jobApplicationRepo = jobApplicationRepo;
     }
 
-    public List<JobApplicationResponse> findAll() {
-        List<JobApplication> jobApplicationList = jobApplicationRepo.findAll();
+    public List<JobApplicationResponse> findAll(AuthUser authUser) {
+        List<JobApplication> jobApplicationList = jobApplicationRepo.findAllByUserId(authUser.id());
         return jobApplicationList.stream().map(JobApplicationResponse::from).toList();
     }
 
-    public JobApplicationResponse findById(Long id) {
+    public JobApplicationResponse findById(Long id, AuthUser authUser) {
         return JobApplicationResponse.from(
-                jobApplicationRepo.findById(id).orElseThrow(
+                jobApplicationRepo.findByIdAndUserId(id, authUser.id()).orElseThrow(
                         () -> new BusinessException(ErrorCode.INVALID_APPLICATION_ID)));
     }
 
     @Transactional
-    public JobApplicationResponse create(JobApplicationRequest jobApplicationRequest) {
+    public JobApplicationResponse create(JobApplicationRequest jobApplicationRequest, AuthUser authUser) {
         JobApplication jobApplication = new JobApplication();
+        jobApplication.setUserId(authUser.id());
         jobApplication.setCompanyName(jobApplicationRequest.companyName());
         jobApplication.setCompanyCountry(CompanyCountry.valueOf(jobApplicationRequest.companyCountry()));
         jobApplication.setJobTitle(jobApplicationRequest.jobTitle());
@@ -53,8 +56,8 @@ public class JobApplicationService {
     }
 
     @Transactional
-    public JobApplicationResponse updateStatus(String applicationStatus, Long id) {
-        JobApplication jobApplication = jobApplicationRepo.findById(id)
+    public JobApplicationResponse updateStatus(String applicationStatus, Long id, AuthUser authUser) {
+        JobApplication jobApplication = jobApplicationRepo.findByIdAndUserId(id, authUser.id())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_APPLICATION_ID));
 
         jobApplication.setStatus(ApplicationStatus.valueOf(applicationStatus));
