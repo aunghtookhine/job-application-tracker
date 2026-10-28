@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: false
+    open-in-view: false
+  web:
+    error:
+      include-message: never
+      include-stacktrace: never
+
+logging:
+  level:
+    root: INFO
+    com.buildmyself.job_application_tracker: INFO

@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT:5433}/${DB_NAME}
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    com.buildmyself.job_application_tracker: DEBUG
